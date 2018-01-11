@@ -17,36 +17,64 @@ startButton.addEventListener('click', () => {
 
 
 // Create 5 Random Phrases array - store as string, only letters/spaces
-const phrases = ['Ma is White', 'Whero is Red', 'Kakariki is Green', 'Pango is black, Mangu is too', 'Kowhai Yellow Pakaka Brown Kiko rangi Blue', 'Pa raka raka is our Orange'];
+const phrases = ["Ma is White", "Whero is Red", "Kakariki is Green", "Pango is black Mangu is too", "Kowhai Yellow Pakaka Brown Kiko rangi Blue", "Pa raka raka is our Orange"];
 
 
 // Create Function to Choose Random Phrase, Split Phrase into Letters - function takes array as a parameter so it is reusable
 
 function getRandomPhraseAsArray(arr){
-  //randomly choose array
+  //sets limit for random number generation range
+  const limit = arr.length;
+  //generate a random number with range of indexes from array
+  let phraseIndex = Math.floor(Math.random() * (limit + 1));
+  //select a phrase by random index value
+  let phraseSelect = phrases[phraseIndex];
   //split array into characters
+  let phraseChar = phraseSelect.split("");
   //return array of characters
-};
+  return phraseChar;
+}
 
 
-// Use function- pass 'phrases' array as an argument when function called
-getRandomPhraseAsArray(phrases);
+// Use function- pass 'phrases' array as an argument when function called - USED BELOW, stored in const
+//getRandomPhraseAsArray(phrases);
 
 
 // Create Function to Put Letters on Game Board
 // set up to take ANY array (parameter 'arr')
 
-//function addPhraseToDisplay(arr){
-    //loop thru Character Array
-    // For each char in array, create li, put char in li, append li to #phrase ul in HTML
-    // if char is letter (not space), function should add class '.letter' to li
-//}
+function addPhraseToDisplay(arr){
+    // define charItems as each item in array
+    const charItems = arr.length;
+    // For each charItem in array:
+    for (let i = 0; i < charItems; i += 1) {
+      let charItem = arr[i];
+      // create li
+      const letterWrap = document.createElement('li');
+      // wrap in li liItem
+      const liItem = letterWrap.appendChild(charItem);
+      //get value in li
+      let contentChar = liItem.innerHTML;
+      // if content charItem.li = " " 
+      if ( contentChar == " ") {
+        //apply space class
+        liItem.className = 'space';
+      } else {
+        // add class '.letter' to li
+        liItem.className = 'letter';
+      }
+      //define phraseUl as #phrase
+      const phraseUl = document.getElementById('phrase');
+      //append li to #phrase ul in HTML
+      phraseUl.appendChild(liItem);
+    }
+}
 
 // USE function to Put Letters on Game Board
 
 const phraseArray = getRandomPhraseAsArray(phrases);
-//addPhrasetoDisplay(phraseArray); 
-
+const test = addPhrasetoDisplay(phraseArray); 
+console.log(phraseArray);
 
 // Create 'checkLetter' function
 function checkLetter(){
@@ -59,7 +87,7 @@ function checkLetter(){
     //return the letter
   //if no match:
     // return 'null'
-};
+}
 
 
 // Player guesses a letter on click - add eventListener to keyboard
