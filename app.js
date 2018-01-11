@@ -3,7 +3,7 @@
 const letterBoard = document.getElementById('qwerty');
 
 //Get the element with the ID of phrase (wraps ul where phrase displayed) and save it to a variable. 
-const phraseDisplay = document.getElementById('phrase');
+const phraseUl = document.getElementById('phrase').getElementsByTagName('ul')[0];
 
 //Create a missed variable, initialized to 0, that you’ll use later to keep track of the number of guesses 
 let missed = 0;
@@ -26,9 +26,9 @@ function getRandomPhraseAsArray(arr){
   //sets limit for random number generation range
   const limit = arr.length;
   //generate a random number with range of indexes from array
-  let phraseIndex = Math.floor(Math.random() * (limit + 1));
+  let phraseIndex = Math.floor(Math.random() * (limit));
   //select a phrase by random index value
-  let phraseSelect = phrases[phraseIndex];
+  let phraseSelect = arr[phraseIndex];
   //split array into characters
   let phraseChar = phraseSelect.split("");
   //return array of characters
@@ -48,23 +48,20 @@ function addPhraseToDisplay(arr){
     const charItems = arr.length;
     // For each charItem in array:
     for (let i = 0; i < charItems; i += 1) {
-      let charItem = arr[i];
-      // create li
-      const letterWrap = document.createElement('li');
+      //create li
+      const liItem = document.createElement('li');
+      //create instance for each loop thru
+      let charItem = charItems[i];
       // wrap in li liItem
-      const liItem = letterWrap.appendChild(charItem);
+      liItem.appendChild(charItem);
       //get value in li
-      let contentChar = liItem.innerHTML;
-      // if content charItem.li = " " 
-      if ( contentChar == " ") {
+      liItem.innerHTML = charItem.toLowerCase();  
+      // if content charItem = " " 
+      if ( charItem == " ") {
         //apply space class
         liItem.className = 'space';
-      } else {
-        // add class '.letter' to li
-        liItem.className = 'letter';
-      }
-      //define phraseUl as #phrase
-      const phraseUl = document.getElementById('phrase');
+      // add class '.letter' to li
+      } else liItem.className = 'letter';
       //append li to #phrase ul in HTML
       phraseUl.appendChild(liItem);
     }
@@ -73,7 +70,7 @@ function addPhraseToDisplay(arr){
 // USE function to Put Letters on Game Board
 
 const phraseArray = getRandomPhraseAsArray(phrases);
-const test = addPhrasetoDisplay(phraseArray); 
+addPhrasetoDisplay(phraseArray); 
 console.log(phraseArray);
 
 // Create 'checkLetter' function
