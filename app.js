@@ -36,28 +36,30 @@ function getRandomPhraseAsArray(arr){
 }
 
 
-// Use function- pass 'phrases' array as an argument when function called - USED BELOW, stored in const
+// Use function- pass 'phrases' array as an argument when function called 
 //getRandomPhraseAsArray(phrases);
-
+let phraseArray = getRandomPhraseAsArray(phrases);
 
 // Create Function to Put Letters on Game Board
 // set up to take ANY array (parameter 'arr')
 
 function addPhraseToDisplay(arr){
-    // define charItems as each item in array
-    const charItems = arr.length;
     // For each charItem in array:
-    for (let i = 0; i < charItems; i += 1) {
-      //create li
-      const liItem = document.createElement('li');
+    for (let i = 0; i < arr.length; i += 1) {
       //create instance for each loop thru
-      let charItem = charItems[i];
+      let charItem = arr[i];
+      //create li
+      const liItem = document.createElement('LI');
+      // create text node
+      let liText = document.createTextNode(charItem);
       // wrap in li liItem
-      liItem.appendChild(charItem);
+      liItem.appendChild(liText);
       //get value in li
-      liItem.innerHTML = charItem.toLowerCase();  
+      liValue = liItem.innerHTML;
+      //make lowercase for consist comparison
+      liLower = liValue.toLowerCase();  
       // if content charItem = " " 
-      if ( charItem == " ") {
+      if ( liLower == " ") {
         //apply space class
         liItem.className = 'space';
       // add class '.letter' to li
@@ -67,11 +69,8 @@ function addPhraseToDisplay(arr){
     }
 }
 
-// USE function to Put Letters on Game Board
+addPhraseToDisplay(phraseArray); 
 
-const phraseArray = getRandomPhraseAsArray(phrases);
-addPhrasetoDisplay(phraseArray); 
-console.log(phraseArray);
 
 // Create 'checkLetter' function
 function checkLetter(){
@@ -95,7 +94,7 @@ function checkLetter(){
   // store returned letter inside a variable called 'letterFound'
 
 
-// TEST HERE TO SEE IF LETTERS APPEAR!!!
+// TEST HERE TO SEE IF LETTERS APPEAR
 
 
 // If letter is not in phrase, remove one life heart - Add to KEYBOARD EVENT ABOVE, after 'checkLetter' is called
