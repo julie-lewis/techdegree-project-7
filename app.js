@@ -1,4 +1,3 @@
-
 //Get the element with the ID of qwerty (wraps keyboard) and save it to a variable
 const letterBoard = document.getElementById('qwerty');
 
@@ -7,6 +6,12 @@ const phraseUl = document.getElementById('phrase').getElementsByTagName('ul')[0]
 
 //Create a missed variable, initialized to 0, that you’ll use later to keep track of the number of guesses 
 let missed = 0;
+
+// get heart images
+const img = document.getElementsByTagName('img');
+
+//get reset button
+const btnStart = document.getElementsByClassName('btn__reset')[0];
 
 // Remove Overlay on click - Event listener on Start Game Button
 const startScreen = document.getElementById('overlay');
@@ -55,9 +60,9 @@ function addPhraseToDisplay(arr){
       // wrap in li liItem
       liItem.appendChild(liText);
       //get value in li
-      liValue = liItem.innerHTML;
+      let liValue = liItem.innerHTML;
       //make lowercase for consist comparison
-      liLower = liValue.toLowerCase();  
+      let liLower = liValue.toLowerCase();  
       // if content charItem = " " 
       if ( liLower == " ") {
         //apply space class
@@ -72,57 +77,149 @@ function addPhraseToDisplay(arr){
 addPhraseToDisplay(phraseArray); 
 
 
+
 // Create 'checkLetter' function
-function checkLetter(){
-  //has one parameter: the button clicked when guessing
+//has one parameter: the button clicked when guessing - this will be passed in later
+function checkLetter(arg) {
+  // creates counter to check, used later outside of letter loop
+  let check = 0;
   //get all elements with class '.letter'
-  //loop thru all letters check if they match letter button chosen
-  //if matches:
-    //add '.show' class to item containing that letter
-    //store letter in a variable
-    //return the letter
-  //if no match:
-    // return 'null'
+  const letters = document.getElementsByClassName('letter');
+  //loop thru all letters
+  for (let i = 0; i < letters.length; i++) {
+    //create letter instance for each loop thru
+    let letter = letters[i];
+    //store letter value in a non-case-sensitive variable
+    let letterItem = letter.innerHTML.toLowerCase();
+    // test to see if argument passes matches each letter instance
+    if(letterItem === arg) {
+      // add class show to letter
+      letter.className += " show";
+      // increase check counter, demoing match was made
+      check++;
+    }
+  }
+  // if there's a match, check becomes 0 >, so if there's a match
+  if (check > 0) {
+    //return the letter that was passed in and created a match
+    return arg;
+  //if check is not more than 0, there was no match, so null is returned
+  } else return null;
 }
 
 
+
+
+
+
+
+
 // Player guesses a letter on click - add eventListener to keyboard
-  // listen only for button events from keyboard
-  // when chosen, add '.chosen' class to button so it can't be chosen twice
-  // set button attribute to 'disabled = true' so that it won't respond to user clicks
-  // pass checkLetter function
-  // store returned letter inside a variable called 'letterFound'
+letterBoard.addEventListener('click', (e)=>{
+  if (e.target.tagName === 'BUTTON') {
+
+    //get value of button on key board
+    let keyValue = e.target.innerHTML;
+    //get all screenButtons
+    const screenButtons = document.getElementsByTagName("button");
+    //for each screenButton
+    for (let i = 0; i < screenButtons.length; i += 1) {
+      //create instance for each loop thru
+      let screenButton = screenButtons[i]; 
+      //get value of button on screenButtonValue
+      let screenButtonValue = screenButton.textContent;
+      
+      //if keyButton == screenButtonValue 
+      if (keyValue == screenButtonValue) {
+        //add '.chosen' class to screen button
+        screenButton.className += " chosen";
+        //set button attribute to 'disabled = true' so that it won't respond to user clicks
+        screenButton.setAttribute('disabled', 'true');      
+      }
+    }
+
+    // pass checkLetter function, store returned letter inside a variable called 'letterFound' 
+    let letterFound = checkLetter(keyValue); 
+
+  /*
+    // add CSS transition
+    //get show items
+    var showStyle = document.getElementById(' show');
+    //change css for 'show' class
+    showStyle.style.transition = "all .5s ease-in";
+  */
+
+    //if letterFound = null, remove 1 attempt, increase 'missed' to +1
+    if (letterFound === null && missed < 5) {
+      // change src attrib to dead heart
+      img[4-missed].src ="images/lostHeart.png";
+      //increase missed counter by 1
+      missed++;
+    }
 
 
-// TEST HERE TO SEE IF LETTERS APPEAR
-
-
-// If letter is not in phrase, remove one life heart - Add to KEYBOARD EVENT ABOVE, after 'checkLetter' is called
-  // check value of 'letterFound' variable
-  //if letterFound = null, remove 1 attempt, increase 'missed' to +1
-  // change display of heart/not heart based on missed counter -change src attrib to dead heart
-
-//Check to see if won or lost - Add to KEYBOARD EVENT ABOVE, after 'checkLetter' is called
-  // If phrase completed with less than 5 wrong guesses, show winning screen 
-    //check # of letters with '.show' 
+    // If phrase completed with less than 5 wrong guesses, show winning screen 
+    //check # of letters with '.show'
+    const show = document.getElementsByClassName('show');
     //check # of letters with class '.letters'
-      //if show = letters, show win screen + text
+    const letter = document.getElementsByClassName('letter');
+    let result;
+    //if show = letters, show win screen + text
+    if(show.length === letter.length){
+      overlay.className = 'win';
+      overlay.style.display = 'flex';
+      overlay.children[0].innerHTML = 'You win!'; 
+      //create 'Play Again' button
+      btnStart.innerHTML = 'Play Again';
     //check # of misses
+    } else if(missed >= 5){
       //if misses >= 5, show '.lose' screen
+      overlay.className = 'lose';
+      overlay.style.display = 'flex';
+      overlay.children[0].innerHTML = 'Sorry, you lose!'; 
+      //create 'Play Again' button
+      btnStart.innerHTML = 'Play Again';
+    }
+    
+
+    //add event listener to 'Play Again' - on click
+    btnStart.addEventListener('click', (e)=>{
+      overlay.style.display = 'none';
+      //reset misses to 0
+      missed = 0;
+      //empty phrase
+      phraseUl.innerHTML = '';
+      for (let i = 0; i <img.length; i++) {
+        img[i].src = "images/liveHeart.png";
+      }
+      //recreate keyboard buttons
+      for (let i = 0; i < screenButtons.length; i++) {
+        screenButtons[i].classList.remove('chosen');
+        screenButtons[i].disabled = false;
+      }
+      //generate new random phrase
+      let phraseArray = getRandomPhraseAsArray(phrases);
+      addPhraseToDisplay(phraseArray);
+    });
+
+  }
+});
 
 
 
-// Add CSS transition for letter as revealed - Add to KEYBOARD EVENT ABOVE, after 'checkLetter' is called
-  //apply transition styles to 'show class' - do in CSS file?
+  
 
 
-// Reset game - recreate buttons, get new phrase, reset misses to 0
-  //Add to KEYBOARD EVENT ABOVE, after 'checkLetter' is called
-  //create 'Play Again' button
-  //add event listener to 'Play Again' - on click, 
-    //recreate keyboard buttons
-    //generate new random phrase
-    //reset misses to 0
+
+
+
+
+
+
+   
+    
+    
+    
 
 
 

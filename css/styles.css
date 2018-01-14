@@ -99,6 +99,9 @@ button {
 }
 
 .show {
+  transition-property: background-color, color;
+  transition-duration: 0.7s;
+  transition-timing-function: ease-in; 
   color: #000;
   background-color: #76CE82;
 }
